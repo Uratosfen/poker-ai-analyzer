@@ -3,7 +3,11 @@ import openai
 import json
 
 # === Налаштування API ===
-openai.api_key = st.secrets.get("OPENAI_API_KEY")
+if "OPENAI_API_KEY" not in st.secrets:
+    st.error("❌ Ключ API не знайдено. Будь ласка, перевірте налаштування.")
+    st.stop()
+
+openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 # === Інтерфейс ===
 st.title("🧠 Poker AI Помічник")
@@ -14,13 +18,28 @@ strategy_file = st.file_uploader("📄 Завантаж файл стратег�
 hands_file = st.file_uploader("🃏 Завантаж файл роздач (TXT)", type=["txt"])
 
 if strategy_file and hands_file:
-    strategy_data = json.load(strategy_file)
-    strategy_text = json.dumps(strategy_data, indent=2)
+    try:
+        strategy_data = json.load(strategy_file)
+        strategy_text = json.dumps(strategy_data, indent=2)
+    except json.JSONDecodeError:
+        st.error("❌ Помилка при завантаженні файлу стратегії. Перевірте, чи це коректний JSON.")
+        st.stop()
+
     hands_text = hands_file.read().decode("utf-8")
+    if not hands_text.strip():
+        st.error("❌ Файл роздач порожній.")
+        st.stop()
+
     hands = hands_text.strip().split("\n\n")
+    max_hands = 5  # Обмеження кількості роздач
+    hands = hands[:max_hands]
 
     st.success("✅ Файли завантажені. Починаємо аналіз...")
 
+    if "analysis_results" not in st.session_state:
+        st.session_state.analysis_results = []
+
+    progress_bar = st.progress(0)
     for i, hand in enumerate(hands):
         if not hand.strip():
             continue
@@ -51,8 +70,16 @@ if strategy_file and hands_file:
                     temperature=0.3,
                 )
                 analysis = response.choices[0].message["content"]
+                st.session_state.analysis_results.append(analysis)
                 st.markdown(f"**Аналіз:**\n\n{analysis}")
             except Exception as e:
                 st.error(f"❌ Помилка аналізу: {e}")
+
+        progress_bar.progress((i + 1) / len(hands))
+
+    if st.session_state.analysis_results:
+        st.subheader("Результати аналізу")
+        for result in st.session_state.analysis_results:
+            st.markdown(result)
 else:
     st.info("⬆️ Завантаж обидва файли для початку аналізу.")
