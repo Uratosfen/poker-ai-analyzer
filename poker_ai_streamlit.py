@@ -4,10 +4,15 @@ import json
 
 # === Налаштування API ===
 if "OPENAI_API_KEY" not in st.secrets:
-    st.error("❌ Ключ API не знайдено. Будь ласка, перевірте налаштування.")
-    st.stop()
-
-openai.api_key = st.secrets["OPENAI_API_KEY"]
+    st.warning("🔑 Ключ API не знайдено у секретах. Будь ласка, введіть його вручну.")
+    api_key = st.text_input("Введіть ваш OpenAI API ключ", type="password")
+    if api_key:
+        openai.api_key = api_key
+        st.success("✅ Ключ успішно додано!")
+    else:
+        st.stop()
+else:
+    openai.api_key = st.secrets["OPENAI_API_KEY"]
 
 # === Інтерфейс ===
 st.title("🧠 Poker AI Помічник")
