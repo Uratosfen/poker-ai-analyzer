@@ -1,0 +1,20 @@
+PokerStars Hand #123456789:  Hold'em No Limit ($5/$10) - 2025/03/22
+Seat 1: Player1 ($1000 in chips)
+Seat 2: OneEyedSnake ($1000 in chips)
+
+*** HOLE CARDS ***
+Dealt to OneEyedSnake [As Js]
+Player1 raises to $30
+OneEyedSnake calls $30
+
+*** FLOP *** [2h 6s Ac]
+Player1 bets $50
+OneEyedSnake calls $50
+
+*** TURN *** [2h 6s Ac] [9d]
+Player1 checks
+OneEyedSnake bets $125
+Player1 folds
+
+*** SUMMARY ***
+OneEyedSnake collected $160
