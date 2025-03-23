@@ -3,6 +3,7 @@ import openai
 import json
 
 # === Налаштування API ===
+# Додано можливість введення ключа вручну
 if "OPENAI_API_KEY" not in st.secrets:
     st.warning("🔑 Ключ API не знайдено у секретах. Будь ласка, введіть його вручну.")
     api_key = st.text_input("Введіть ваш OpenAI API ключ", type="password")
@@ -10,9 +11,9 @@ if "OPENAI_API_KEY" not in st.secrets:
         openai.api_key = api_key
         st.success("✅ Ключ успішно додано!")
     else:
-        st.stop()
+        st.stop()  # Зупинити виконання, якщо ключ не введено
 else:
-    openai.api_key = st.secrets["OPENAI_API_KEY"]
+    openai.api_key = st.secrets["OPENAI_API_KEY"]  # Використовувати ключ з secrets.toml
 
 # === Інтерфейс ===
 st.title("🧠 Poker AI Помічник")
@@ -67,7 +68,7 @@ if strategy_file and hands_file:
 
             try:
                 response = openai.ChatCompletion.create(
-                    model="gpt-4",
+                    model="gpt-3.5-turbo",  # Використовуємо gpt-3.5-turbo
                     messages=[
                         {"role": "system", "content": "You are a professional poker coach."},
                         {"role": "user", "content": prompt}
